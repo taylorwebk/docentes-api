@@ -1,0 +1,15 @@
+{
+    "name": "taylor/docentes-api",
+    "description": "Back End para el proyecto docentes.",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Taylor Kev",
+            "email": "taylorwebk@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^3.9",
+        "illuminate/database": "^5.5"
+    }
+}
