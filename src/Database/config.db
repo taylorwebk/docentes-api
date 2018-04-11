@@ -2,4 +2,4 @@
 host    = localhost
 user    = taylor
 password= tallarin3
-database= escolardb
+database= docentedb
