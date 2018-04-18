@@ -1,5 +1,6 @@
 <?php
 namespace Models;
+use \Firebase\JWT\JWT;
 class Utils 
 {
   public static function validateData($data, $fields)
@@ -14,4 +15,12 @@ class Utils
   public static function implodeFields($fields) {
       return 'No se reconocen uno o varios de los campos: '. implode(', ', $fields);
   }
+  public static function generateToken($id, $correo) {
+    $token = [
+        "id"        => $id,
+        "correo"    => $correo
+    ];
+    $tokenstr = JWT::encode($token, PRIVATEKEY);
+    return (string) $tokenstr;
+    }
 }

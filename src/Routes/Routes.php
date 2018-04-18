@@ -13,3 +13,7 @@ $app->post('/administrador', function (Request $req, Response $res) {
     $result = AdminC::addAdmin($req->getParsedBody());
     return $res->withJson($result);
 });
+$app->post('/admin/login', function(Request $req, Response $res){
+    $result = AdminC::login($req->getParsedBody());
+    return $res->withJson($result);
+});
