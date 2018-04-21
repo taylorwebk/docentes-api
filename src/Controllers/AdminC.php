@@ -4,6 +4,8 @@ namespace Controllers;
 use \Models\Response;
 use \Models\Utils;
 use \Models\Administrador as Admin;
+use \Models\Auxiliar;
+use \Models\Docente;
 
 class AdminC
 {
@@ -57,5 +59,31 @@ class AdminC
           );
       }
   }
-  
+  public static function addUnivTeach($admin, $data) {
+      $fields = ['nombres', 'apellidos', 'grado', 'materias'];
+      if (!Utils::validateData($data, $fields)) {
+          return Response::BadRequest(Utils::implodeFields($fields));
+      }
+      if ($data['grado']==='') {
+          $aux = Auxiliar::create([
+              'nombres'     => $data['nombres'],
+              'apellidos'   => $data['apellidos']
+          ]);
+          foreach ($data['materias'] as $idmat) {
+              $aux->materias()->attach($idmat, ['estado' => 1]);
+          }
+          return Response::OK('Registrado', 'Auxiliar '.$aux->nombres.' registrado', null);
+      } else {
+          $doc = Docente::create([
+              'nombres'     => $data['nombres'],
+              'apellidos'   => $data['apellidos'],
+              'grado'       => $data['grado']
+          ]);
+          foreach ($data['materias'] as $idmat) {
+              $doc->materias()->attach($idmat, ['estado' => 1]);
+          }
+          return Response::OK('Registrado', 'Docente '.$doc->grado.' '.$doc->nombres.' registrado', null);
+      }
+      
+  }
 }

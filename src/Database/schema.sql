@@ -21,12 +21,11 @@ create table materia(
   nombre varchar(255),
   primary key(id)
 );
-create table ddicta(
-  id integer not null auto_increment,
+create table docente_materia(
   docente_id integer not null,
   materia_id integer not null,
   estado boolean,
-  primary key(id),
+  primary key(docente_id, materia_id),
   foreign key(docente_id)
   references docente(id)
   on delete cascade,
@@ -34,12 +33,11 @@ create table ddicta(
   references materia(id)
   on delete cascade
 );
-create table adicta(
-  id integer not null auto_increment,
+create table auxiliar_materia(
   auxiliar_id integer not null,
   materia_id integer not null,
   estado boolean,
-  primary key(id),
+  primary key(auxiliar_id, materia_id),
   foreign key(auxiliar_id)
   references auxiliar(id)
   on delete cascade,
@@ -67,32 +65,32 @@ create table administrador(
   passw varchar(255),
   primary key(id)
 );
-create table comentario_ddicta(
+create table comentario_docente(
   comentario_id integer not null,
-  ddicta_id integer not null,
+  docente_id integer not null,
   val tinyint,
   fecha date,
   hora time,
-  primary key(comentario_id, ddicta_id),
+  primary key(comentario_id, docente_id),
   foreign key(comentario_id)
   references comentario(id)
   on delete cascade,
-  foreign key(ddicta_id)
-  references ddicta(id)
+  foreign key(docente_id)
+  references docente(id)
   on delete cascade
 );
-create table adicta_comentario(
+create table auxiliar_comentario(
   comentario_id integer not null,
-  adicta_id integer not null,
+  auxiliar_id integer not null,
   val tinyint,
   fecha date,
   hora time,
-  primary key(comentario_id, adicta_id),
+  primary key(comentario_id, auxiliar_id),
   foreign key(comentario_id)
   references comentario(id)
   on delete cascade,
-  foreign key(adicta_id)
-  references adicta(id)
+  foreign key(auxiliar_id)
+  references auxiliar(id)
   on delete cascade
 );
 create table comentario_reaccion(

@@ -4,6 +4,15 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 use \Controllers\AdminC;
 
+$app->group('/admin', function () use ($app) {
+    $app->post('/docente', function (Request $req, Response $res)
+    {
+        $admin = $req->getAttribute('admin');
+        $result = AdminC::addUnivTeach($admin, $req->getParsedBody());
+        return $res->withJson($result);
+    });
+})->add(new \Middlewares\AdminAuth());
+
 $app->get('/', function (Request $req, Response $res)
 {
     $arr = "HOLA MUNDO";
