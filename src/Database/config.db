@@ -1,5 +1,5 @@
 [database]
 host    = localhost
-user    = taylor
-password= tallarin3
+user    = root
+password= 
 database= docentedb

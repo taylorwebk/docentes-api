@@ -6,6 +6,7 @@ use \Models\Utils;
 use \Models\Administrador as Admin;
 use \Models\Auxiliar;
 use \Models\Docente;
+use \Models\Materia;
 
 class AdminC
 {
@@ -84,6 +85,19 @@ class AdminC
           }
           return Response::OK('Registrado', 'Docente '.$doc->grado.' '.$doc->nombres.' registrado', null);
       }
-      
+  }
+  public static function subjectList(){
+      $materias = Materia::all();
+      return Response::OK('Lista de materias', 'Lista de materias mostrada correctamente!' , $materias);
+  }
+  // arreglar
+  public static function teachUnivList(){
+        $auxs = Auxiliar::all();
+        $teachers = Docente::all();
+        $resp = [
+            'auxiliares' => $auxs,
+            'docentes' => $teachers
+        ];
+        return Response::OK('Lista docentes y auxiliares', 'Lista de docentes y auxiliares mostrada correctamente!' , $resp);
   }
 }

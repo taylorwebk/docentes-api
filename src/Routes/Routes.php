@@ -26,3 +26,11 @@ $app->post('/admin/login', function(Request $req, Response $res){
     $result = AdminC::login($req->getParsedBody());
     return $res->withJson($result);
 });
+$app->get('/docaux', function(Request $req, Response $res){
+    $result = AdminC::teachUnivList();
+    return $res->withJson($result);
+});
+$app->get('/materias', function(Request $req, Response $res){
+    $result = AdminC::subjectList();
+    return $res->withJson($result);
+});
