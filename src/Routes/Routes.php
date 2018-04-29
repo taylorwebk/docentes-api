@@ -26,10 +26,16 @@ $app->post('/admin/login', function(Request $req, Response $res){
     $result = AdminC::login($req->getParsedBody());
     return $res->withJson($result);
 });
-$app->get('/docaux', function(Request $req, Response $res){
-    $result = AdminC::teachUnivList();
+
+$app->get('/doc/{id}', function(Request $req, Response $res, $args){
+    $result = AdminC::teachList($args['id']);
     return $res->withJson($result);
 });
+$app->get('/auxi/{id}', function(Request $req, Response $res, $args){
+    $result = AdminC::univList($args['id']);
+    return $res->withJson($result);
+});
+
 $app->get('/materias', function(Request $req, Response $res){
     $result = AdminC::subjectList();
     return $res->withJson($result);

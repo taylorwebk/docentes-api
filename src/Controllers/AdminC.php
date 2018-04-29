@@ -65,7 +65,7 @@ class AdminC
       if (!Utils::validateData($data, $fields)) {
           return Response::BadRequest(Utils::implodeFields($fields));
       }
-      if ($data['grado']==='') {
+      if ($data['grado']==='Aux') {
           $aux = Auxiliar::create([
               'nombres'     => $data['nombres'],
               'apellidos'   => $data['apellidos']
@@ -90,14 +90,106 @@ class AdminC
       $materias = Materia::all();
       return Response::OK('Lista de materias', 'Lista de materias mostrada correctamente!' , $materias);
   }
-  // arreglar
-  public static function teachUnivList(){
-        $auxs = Auxiliar::all();
-        $teachers = Docente::all();
-        $resp = [
-            'auxiliares' => $auxs,
-            'docentes' => $teachers
+  
+  /*public static function teachList(){
+    $teachers = Docente::with('comentarios')->get();
+    $teachersres = $teachers->map(function($teacher){
+        $sum = 0;
+        $nrocom = $teacher->comentarios()->count();
+        $teacher->comentarios->each(function($comentario) use (&$sum){
+        $sum += $comentario->pivot->val;
+    });
+        return [
+            'id'            => $teacher->id,
+            'nombres'       => $teacher->nombres,
+            'apellidos'     => $teacher->apellidos,
+            'grado'         => $teacher->grado,
+            'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
+            'nroCom'        => $nrocom
         ];
-        return Response::OK('Lista docentes y auxiliares', 'Lista de docentes y auxiliares mostrada correctamente!' , $resp);
+    });
+    return Response::OK('Lista docentes', 'Lista docentes mostrada correctamente!' , $teachersres);
+  }*/
+  public static function univList($id){
+        $auxiliar = Auxiliar::find($id);
+        $sum = 0;
+        $nrocom = $auxiliar->comentarios()->count();
+        $res= $auxiliar->comentarioscf->map(function($comentario){
+               
+            if($comentario->comentario_id==null){
+
+            return [
+                'id'            => $comentario->id,
+                'cont'          => $comentario->cont,
+                'val'           => $comentario->pivot->val,
+                'fecha'         => $comentario->pivot->fecha,
+                'hora'         => $comentario->pivot->hora,
+                'subComentarios'=> $comentario->subcomentarios
+            ];
+            }
+        });
+        $res = $res->filter(function($r) {
+            if($r == null) {
+                return false;
+            }
+            return true;
+        });
+
+           
+            $auxiliar->comentarios->each(function($comentario) use (&$sum) {
+                $sum += $comentario->pivot->val;
+            });
+            $respuesta = [
+                'id'            => $auxiliar->id,
+                'nombres'       => $auxiliar->nombres,
+                'apellidos'     => $auxiliar->apellidos,
+                'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
+                'nroCom'        => $nrocom,
+                'comentarios'   => $res
+            ];
+        return Response::OK('Auxiliares y comentarios', 'Auxiliares y comentarios correctamente!' , $respuesta);
   }
+
+  public static function teachList($id){
+    
+    $teacher = Docente::find($id);
+    $sum = 0;
+    $nrocom = $teacher->comentarios()->count();
+    $res= $teacher->comentarioscf->map(function($comentario){
+           
+        if($comentario->comentario_id==null){
+
+        return [
+            'id'            => $comentario->id,
+            'cont'          => $comentario->cont,
+            'val'           => $comentario->pivot->val,
+            'fecha'         => $comentario->pivot->fecha,
+            'hora'          => $comentario->pivot->hora,
+            'subComentarios'=> $comentario->subcomentarios
+        ];
+        }
+    });
+    $res = $res->filter(function($r) {
+        if($r == null) {
+            return false;
+        }
+        return true;
+    });
+
+       
+        $teacher->comentarios->each(function($comentario) use (&$sum) {
+            $sum += $comentario->pivot->val;
+        });
+        $respuesta = [
+            'id'            => $teacher->id,
+            'nombres'       => $teacher->nombres,
+            'apellidos'     => $teacher->apellidos,
+            'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
+            'nroCom'        => $nrocom,
+            'comentarios'   => $res
+        ];
+    return Response::OK('Docentes y comentarios', 'Docentes y comentarios correctamente!' , $respuesta);
 }
+}
+
+
