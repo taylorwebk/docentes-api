@@ -193,7 +193,7 @@ public static function teachersList(){
             'nombres'       => $teacher->nombres,
             'apellidos'     => $teacher->apellidos,
             'grado'         => $teacher->grado,
-            'Materias'      => $matt,
+            'materias'      => $matt,
             'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
             'nroCom'        => $nrocom
         ];
@@ -222,7 +222,7 @@ public static function assistantsList(){
             'id'            => $aux->id,
             'nombres'       => $aux->nombres,
             'apellidos'     => $aux->apellidos,
-            'Materias'      => $matt,
+            'materias'      => $matt,
             'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
             'nroCom'        => $nrocom
         ];
@@ -230,4 +230,67 @@ public static function assistantsList(){
     return Response::OK('Lista auxiliares', 'Lista auxiliares mostrada correctamente!' , $auxsres);
 
 }
+public static function topTeachersList(){
+    $teachers = Docente::with(['comentarios','materias'])->get();
+    $teachersres = $teachers->map(function($teacher){
+        $sum = 0;
+        $cont=0;
+        $listMat=[];
+        $nrocom = $teacher->comentarios()->count();
+    
+        $teacher->comentarios->each(function($comentario) use (&$sum){
+        $sum += $comentario->pivot->val;
+        });
+        $teacher->materias->each(function($materia)use(&$listMat,&$cont){
+            
+            $listMat[$cont]=$materia->sigla;
+            $cont++;
+        });
+        //en matt se almacenan todas las materias
+        $matt=implode(",",$listMat);
+        return  [
+            'id'            => $teacher->id,
+            'nombres'       => $teacher->nombres,
+            'apellidos'     => $teacher->apellidos,
+            'grado'         => $teacher->grado,
+            'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
+        ];
+        
+
+    });
+    $teachersres=$teachersres->sortByDesc('puntuacion')->values()->take(5);
+    
+    return Response::OK('Top docentes', 'Top docentes mostrado correctamente!' , $teachersres);
+
+}
+public static function topAssistantsList(){
+    $auxs = Auxiliar::with('comentarios','materias')->get();
+    $auxsres = $auxs->map(function($aux){
+        $sum = 0;
+        $cont=0;
+        $listMat=[];
+        $nrocom = $aux->comentarios()->count();
+        $aux->comentarios->each(function($comentario) use (&$sum){
+        $sum += $comentario->pivot->val;
+    });
+    $aux->materias->each(function($materia)use(&$listMat,&$cont){
+            
+        $listMat[$cont]=$materia->sigla;
+        $cont++;
+    });
+        //en matt se almacenan todas las materias
+        $matt=implode(",",$listMat);
+        return [
+            'id'            => $aux->id,
+            'nombres'       => $aux->nombres,
+            'apellidos'     => $aux->apellidos,
+            'materias'      => $matt,
+            'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
+            'nroCom'        => $nrocom
+        ];
+    });
+    $auxsres=$auxsres->sortByDesc('puntuacion')->values()->take(5);
+    return Response::OK('Top auxiliares', 'Top auxiliares mostrado correctamente!' , $auxsres);
+}
+
 }
