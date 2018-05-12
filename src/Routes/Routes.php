@@ -40,3 +40,11 @@ $app->get('/materias', function(Request $req, Response $res){
     $result = AdminC::subjectList();
     return $res->withJson($result);
 });
+$app->get('/doc', function(Request $req, Response $res){
+    $result = AdminC::teachersList();
+    return $res->withJson($result);
+});
+$app->get('/auxi', function(Request $req, Response $res){
+    $result = AdminC::assistantsList();
+    return $res->withJson($result);
+});

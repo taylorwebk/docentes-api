@@ -91,25 +91,7 @@ class AdminC
       return Response::OK('Lista de materias', 'Lista de materias mostrada correctamente!' , $materias);
   }
   
-  /*public static function teachList(){
-    $teachers = Docente::with('comentarios')->get();
-    $teachersres = $teachers->map(function($teacher){
-        $sum = 0;
-        $nrocom = $teacher->comentarios()->count();
-        $teacher->comentarios->each(function($comentario) use (&$sum){
-        $sum += $comentario->pivot->val;
-    });
-        return [
-            'id'            => $teacher->id,
-            'nombres'       => $teacher->nombres,
-            'apellidos'     => $teacher->apellidos,
-            'grado'         => $teacher->grado,
-            'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
-            'nroCom'        => $nrocom
-        ];
-    });
-    return Response::OK('Lista docentes', 'Lista docentes mostrada correctamente!' , $teachersres);
-  }*/
+
   public static function univList($id){
         $auxiliar = Auxiliar::find($id);
         $sum = 0;
@@ -175,8 +157,6 @@ class AdminC
         }
         return true;
     });
-
-       
         $teacher->comentarios->each(function($comentario) use (&$sum) {
             $sum += $comentario->pivot->val;
         });
@@ -190,6 +170,64 @@ class AdminC
         ];
     return Response::OK('Docentes y comentarios', 'Docentes y comentarios correctamente!' , $respuesta);
 }
+public static function teachersList(){
+    $teachers = Docente::with(['comentarios','materias'])->get();
+    $teachersres = $teachers->map(function($teacher){
+        $sum = 0;
+        $cont=0;
+        $listMat=[];
+        $nrocom = $teacher->comentarios()->count();
+    
+        $teacher->comentarios->each(function($comentario) use (&$sum){
+        $sum += $comentario->pivot->val;
+        });
+        $teacher->materias->each(function($materia)use(&$listMat,&$cont){
+            
+            $listMat[$cont]=$materia->sigla;
+            $cont++;
+        });
+        //en matt se almacenan todas las materias
+        $matt=implode(",",$listMat);
+        return [
+            'id'            => $teacher->id,
+            'nombres'       => $teacher->nombres,
+            'apellidos'     => $teacher->apellidos,
+            'grado'         => $teacher->grado,
+            'Materias'      => $matt,
+            'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
+            'nroCom'        => $nrocom
+        ];
+    });
+    return Response::OK('Lista docentes', 'Lista docentes mostrada correctamente!' , $teachersres);
+  }
+public static function assistantsList(){
+     
+    $auxs = Auxiliar::with('comentarios','materias')->get();
+    $auxsres = $auxs->map(function($aux){
+        $sum = 0;
+        $cont=0;
+        $listMat=[];
+        $nrocom = $aux->comentarios()->count();
+        $aux->comentarios->each(function($comentario) use (&$sum){
+        $sum += $comentario->pivot->val;
+    });
+    $aux->materias->each(function($materia)use(&$listMat,&$cont){
+            
+        $listMat[$cont]=$materia->sigla;
+        $cont++;
+    });
+        //en matt se almacenan todas las materias
+        $matt=implode(",",$listMat);
+        return [
+            'id'            => $aux->id,
+            'nombres'       => $aux->nombres,
+            'apellidos'     => $aux->apellidos,
+            'Materias'      => $matt,
+            'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
+            'nroCom'        => $nrocom
+        ];
+    });
+    return Response::OK('Lista auxiliares', 'Lista auxiliares mostrada correctamente!' , $auxsres);
+
 }
-
-
+}
