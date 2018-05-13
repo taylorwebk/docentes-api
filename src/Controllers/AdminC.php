@@ -230,7 +230,7 @@ public static function assistantsList(){
     return Response::OK('Lista auxiliares', 'Lista auxiliares mostrada correctamente!' , $auxsres);
 
 }
-public static function topTeachersList(){
+public static function topList(){
     $teachers = Docente::with(['comentarios','materias'])->get();
     $teachersres = $teachers->map(function($teacher){
         $sum = 0;
@@ -258,12 +258,43 @@ public static function topTeachersList(){
         
 
     });
+    $auxs = Auxiliar::with('comentarios','materias')->get();
+    $auxsres = $auxs->map(function($aux){
+        $sum = 0;
+        $cont=0;
+        $listMat=[];
+        $nrocom = $aux->comentarios()->count();
+        $aux->comentarios->each(function($comentario) use (&$sum){
+        $sum += $comentario->pivot->val;
+    });
+    $aux->materias->each(function($materia)use(&$listMat,&$cont){
+            
+        $listMat[$cont]=$materia->sigla;
+        $cont++;
+    });
+        //en matt se almacenan todas las materias
+        $matt=implode(",",$listMat);
+        return [
+            'id'            => $aux->id,
+            'nombres'       => $aux->nombres,
+            'apellidos'     => $aux->apellidos,
+            'materias'      => $matt,
+            'puntuacion'    => $nrocom>0?($sum/$nrocom):0,
+            'nroCom'        => $nrocom
+        ];
+    });
     $teachersres=$teachersres->sortByDesc('puntuacion')->values()->take(5);
+    $auxsres=$auxsres->sortByDesc('puntuacion')->values()->take(5);
+    $top= [
+        'top_docentes'=>$teachersres,
+        'top_auxiliares'=>$auxsres
+    ];
+   
     
-    return Response::OK('Top docentes', 'Top docentes mostrado correctamente!' , $teachersres);
+    return Response::OK('Top docentes y auxiliares', 'Top  mostrado correctamente!' , $top);
 
 }
-public static function topAssistantsList(){
+/* public static function topAssistantsList(){
     $auxs = Auxiliar::with('comentarios','materias')->get();
     $auxsres = $auxs->map(function($aux){
         $sum = 0;
@@ -291,6 +322,6 @@ public static function topAssistantsList(){
     });
     $auxsres=$auxsres->sortByDesc('puntuacion')->values()->take(5);
     return Response::OK('Top auxiliares', 'Top auxiliares mostrado correctamente!' , $auxsres);
-}
+} */
 
 }

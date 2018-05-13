@@ -48,11 +48,8 @@ $app->get('/auxi', function(Request $req, Response $res){
     $result = AdminC::assistantsList();
     return $res->withJson($result);
 });
-$app->get('/top5Doc', function(Request $req, Response $res){
-    $result = AdminC::topTeachersList();
+$app->get('/top5doc-aux', function(Request $req, Response $res){
+    $result = AdminC::topList();
     return $res->withJson($result);
 });
-$app->get('/top5Aux', function(Request $req, Response $res){
-    $result = AdminC::topAssistantsList();
-    return $res->withJson($result);
-});
+
