@@ -15,5 +15,6 @@ class Docente extends Model
     public function comentarioscf() {
         return $this->belongsToMany('\Models\Comentario')->withPivot(['val', 'fecha', 'hora']);
     }
+
 }
 

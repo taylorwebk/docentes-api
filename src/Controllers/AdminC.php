@@ -7,6 +7,8 @@ use \Models\Administrador as Admin;
 use \Models\Auxiliar;
 use \Models\Docente;
 use \Models\Materia;
+use \Models\Comentario;
+
 
 class AdminC
 {
@@ -294,6 +296,66 @@ public static function topList(){
     return Response::OK('Top docentes y auxiliares', 'Top  mostrado correctamente!' , $top);
 
 }
+public static function addComentarioT($data) {
+    $fields=['id','cont','val','comentario_id','nick'];
+    if (!Utils::validateData($data, $fields)) {
+      return Response::BadRequest(Utils::implodeFields($fields));
+    }
+    if ($data['comentario_id']!="null") {
+        $coment = Comentario::create([
+          'nick'   => $data['nick'],
+          'cont'   => $data['cont'],
+          'comentario_id' => $data['comentario_id'],
+          'fecha' => date('Y-m-d'),
+          'hora' => date('H:i:s')
+        ]);
+        return Response::OK('Se agrego el subcomentario', 'REgistrado exitosamente', $coment);
+    } else {
+        $coment = Comentario::create([
+            'nick'   => $data['nick'],
+            'cont'   => $data['cont'],
+            'fecha' => date('Y-m-d'),
+             'hora' => date('H:i:s')
+        ]);
+        $docente = Docente::find($data['id']);
+        $docente->comentarios()->attach($coment->id, [
+            'val'   => $data['val']
+        ]);
+        return Response::OK('Se agrego el comentario', 'REgistrado exitosamente', $coment);
+    }          
+  }
+
+
+  public static function addComentarioA($data) {
+    $fields=['id','cont','val','comentario_id','nick'];
+    if (!Utils::validateData($data, $fields)) {
+      return Response::BadRequest(Utils::implodeFields($fields));
+    }
+    if ($data['comentario_id']!="null") {
+        $coment = Comentario::create([
+          'nick'   => $data['nick'],
+          'cont'   => $data['cont'],
+          'comentario_id' => $data['comentario_id'],
+          'fecha' => date('Y-m-d'),
+          'hora' => date('H:i:s')
+        ]);
+        return Response::OK('Se agrego el subcomentario', 'REgistrado exitosamente', $coment);
+    } else {
+        $coment = Comentario::create([
+            'nick'   => $data['nick'],
+            'cont'   => $data['cont'],
+            'fecha' => date('Y-m-d'),
+             'hora' => date('H:i:s')
+        ]);
+        $auxiliar = Auxiliar::find($data['id']);
+        $auxiliar->comentarios()->attach($coment->id, [
+            'val'   => $data['val']
+        ]);
+        return Response::OK('Se agrego el comentario', 'REgistrado exitosamente', $coment);
+    }          
+  }
+
+
 /* public static function topAssistantsList(){
     $auxs = Auxiliar::with('comentarios','materias')->get();
     $auxsres = $auxs->map(function($aux){

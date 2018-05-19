@@ -47,7 +47,10 @@ create table auxiliar_materia(
 );
 create table comentario(
   id integer not null auto_increment,
+  nick varchar(63),
   cont text,
+  fecha date,
+  hora time,
   comentario_id integer default null,
   primary key(id)
 );
@@ -69,8 +72,6 @@ create table comentario_docente(
   comentario_id integer not null,
   docente_id integer not null,
   val tinyint,
-  fecha date,
-  hora time,
   primary key(comentario_id, docente_id),
   foreign key(comentario_id)
   references comentario(id)
@@ -83,8 +84,6 @@ create table auxiliar_comentario(
   comentario_id integer not null,
   auxiliar_id integer not null,
   val tinyint,
-  fecha date,
-  hora time,
   primary key(comentario_id, auxiliar_id),
   foreign key(comentario_id)
   references comentario(id)

@@ -52,4 +52,11 @@ $app->get('/top5doc-aux', function(Request $req, Response $res){
     $result = AdminC::topList();
     return $res->withJson($result);
 });
-
+$app->post('/docente/comentario', function (Request $req, Response $res) {
+    $result = AdminC::addComentarioT($req->getParsedBody());
+    return $res->withJson($result);
+});
+$app->post('/auxiliar/comentario', function (Request $req, Response $res) {
+    $result = AdminC::addComentarioA($req->getParsedBody());
+    return $res->withJson($result);
+});
